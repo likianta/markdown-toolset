@@ -1,0 +1,6 @@
+/.idea/
+/lib/
+/src/markdown_image_cleaner/deleted/*
+/src/markdown_image_lofter/data/*
+/src/markdown_image_lofter/config_*.yaml
+__pycache__/
