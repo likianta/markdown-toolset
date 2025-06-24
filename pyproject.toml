@@ -18,6 +18,7 @@ argsense = { version = "^1.0.1a0", source = "likianta" }
 lk-utils = { version = "^3.3.0a13", source = "likianta" }
 markdown2 = "^2.5.2"
 pillow = "^10.4.0"
+pyapp-window = { version = "^2.2.0b4", source = "likianta" }
 pyperclip = "^1.9.0"
 qmlease = { version = "^3.1.0a30", source = "likianta", extras = ["ui"], python = ">=3.12,<3.14" }
 streamlit = "^1.45.0"
