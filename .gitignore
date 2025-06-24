@@ -4,3 +4,4 @@
 /src/markdown_image_lofter/data/*
 /src/markdown_image_lofter/config_*.yaml
 __pycache__/
+!**/.gitkeep
