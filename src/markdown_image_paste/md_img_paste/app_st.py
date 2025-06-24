@@ -2,12 +2,12 @@ if __name__ == '__main__':
     __package__ = 'src.markdown_image_paste.md_img_paste'
 
 import streamlit as st
-# import streamlit_canary as sc
 # import typing as t
 from lk_utils import dedent
 from lk_utils import fs
 from .common import add_content_to_clipboard
 from .common import format_link
+from .common import grab_and_save_image
 from .common import grab_image
 
 
@@ -15,18 +15,35 @@ def main() -> None:
     img_root = _get_image_root()
     target = _get_target_dir(img_root) if img_root else None
     link_fmt = _get_link_format(img_root, target)
-    dumped_info = st.empty()
-    if st.button(
-        'Dump clipboard image',
-        disabled=True if not img_root or not link_fmt else False,
-        use_container_width=True,
-        type='primary',
-    ):
-        file = grab_image(img_root)
+    
+    cols = iter(st.columns(2))
+    with next(cols):
+        do_preview = st.button('Preview', use_container_width=True)
+    with next(cols):
+        do_dump = st.button(
+            'Dump image',
+            disabled=True if not img_root or not link_fmt else False,
+            use_container_width=True,
+            type='primary',
+        )
+        
+    info_area = st.empty()
+    img_area = st.empty()
+    
+    if do_preview or do_dump:
+        try:
+            with img_area:
+                st.image(grab_image())
+        except AssertionError:
+            with info_area:
+                st.error('No image found in the clipboard.')
+            return
+    if do_dump:
+        file = grab_and_save_image(img_root)
         link = format_link(file, link_fmt, img_root)
         print(':iv2', link)
         add_content_to_clipboard(link)
-        with dumped_info:
+        with info_area:
             st.success('Saved link: `{}`'.format(link))
 
 
