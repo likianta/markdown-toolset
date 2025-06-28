@@ -12,6 +12,8 @@ from .common import grab_image
 
 
 def main() -> None:
+    st.set_page_config('Markdown Image Paste')
+    
     img_root = _get_image_root()
     target = _get_target_dir(img_root) if img_root else None
     link_fmt = _get_link_format(img_root, target)
@@ -54,18 +56,21 @@ def _get_image_root() -> str | None:
     return None
 
 
-def _get_link_format(img_root: str, target_ref: str | None) -> str:
-    if target_ref:
-        if img_root.startswith(target_ref + '/'):
-            prefix = './'
+def _get_link_format(img_root: str | None, target_ref: str | None) -> str:
+    if img_root:
+        if target_ref:
+            if img_root.startswith(target_ref + '/'):
+                prefix = './'
+            else:
+                prefix = ''
+            default_fmt = '![]({}{}/<file_name>)'.format(
+                prefix, fs.relpath(img_root, target_ref),
+            )
+            assert default_fmt.startswith(('![](./', '![](../'))
         else:
-            prefix = ''
-        default_fmt = '![]({}{}/<file_name>)'.format(
-            prefix, fs.relpath(img_root, target_ref),
-        )
+            default_fmt = '![](./{}/<file_name>)'.format(fs.basename(img_root))
     else:
-        default_fmt = '![](./{}/<file_name>)'.format(fs.basename(img_root))
-    assert default_fmt.startswith(('![](./', '![](../'))
+        default_fmt = '![](./<root_name>/<file_name>)'
     
     x = st.text_input(
         'Link format',
@@ -106,6 +111,6 @@ def _get_target_dir(img_root: str) -> str:
 
 if __name__ == '__main__':
     # strun 2160 src/markdown_image_paste/md_img_paste/app_st.py
-    # pox -m pyapp_window --port 3001 --size 750x250 --title
+    # pox -m pyapp_window --port 3001 --size 840x820 --title
     #   "Markdown Image Paste"
     main()

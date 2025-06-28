@@ -18,6 +18,7 @@ def grab_and_save_image(root: str) -> str:
     """
     img = ImageGrab.grabclipboard()
     file = '{}/{}.png'.format(root, timestamp('hns'))
+    assert not fs.exist(file)
     img.save(file)
     return file
 
