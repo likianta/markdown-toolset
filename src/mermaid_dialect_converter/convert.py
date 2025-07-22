@@ -150,5 +150,5 @@ def _parse_line(line: str) -> t.Tuple[str, int]:
 
 
 if __name__ == '__main__':
-    # pox src/text_flow_to_mermaid/main.py ...
+    # pox src/mermaid_dialect_converter/convert.py ...
     cli.run(main)
