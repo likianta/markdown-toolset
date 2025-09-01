@@ -1,5 +1,5 @@
 if __name__ == '__main__':
-    __package__ = 'projects.markdown_image_base64.md_img_b64'
+    __package__ = 'src.markdown_image_base64.md_img_b64'
 
 import streamlit as st
 from lk_utils import fs
