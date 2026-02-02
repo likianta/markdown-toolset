@@ -2,7 +2,6 @@ if __name__ == '__main__':
     __package__ = 'src.markdown_image_paste.md_img_paste'
 
 import streamlit as st
-# import typing as t
 from lk_utils import dedent
 from lk_utils import fs
 from .common import add_content_to_clipboard
@@ -57,38 +56,52 @@ def _get_image_root() -> str | None:
 
 
 def _get_link_format(img_root: str | None, target_ref: str | None) -> str:
-    if img_root:
-        if target_ref:
-            if img_root.startswith(target_ref + '/'):
-                prefix = './'
-            else:
-                prefix = ''
-            default_fmt = '![]({}{}/<file_name>)'.format(
-                prefix, fs.relpath(img_root, target_ref),
-            )
-            assert default_fmt.startswith(('![](./', '![](../'))
-        else:
-            default_fmt = '![](./{}/<file_name>)'.format(fs.basename(img_root))
-    else:
-        default_fmt = '![](./<root_name>/<file_name>)'
-    
-    x = st.text_input(
-        'Link format',
-        placeholder=default_fmt,
-        help=dedent(
-            '''
-            Supported variants:
-
-            | Variant       | Example    |
-            | ------------- | ---------- |
-            | `<root_name>` | _assets    |
-            | `<file_name>` | 110923.png |
-            | `<bare_name>` | 110923     |
-            | `<file_ext>`  | png        |
-            '''
+    with st.container(horizontal=True):
+        place1 = st.empty()
+        preset_style = st.radio(
+            'Preset link style',
+            ('Markdown', 'Markowl'),
+            horizontal=True,
         )
-    )
-    return x or default_fmt
+    
+        if img_root:
+            if target_ref:
+                if img_root.startswith(target_ref + '/'):
+                    prefix = './'
+                else:
+                    prefix = ''
+                default_fmt = '![]({}{}/<file_name>)'.format(
+                    prefix, fs.relpath(img_root, target_ref),
+                )
+                assert default_fmt.startswith(('![](./', '![](../'))
+            else:
+                default_fmt = (
+                    '![](./{}/<file_name>)'.format(fs.basename(img_root))
+                )
+        else:
+            default_fmt = '![](./<root_name>/<file_name>)'
+        
+        if preset_style == 'Markowl':
+            default_fmt = default_fmt.replace('![](', '[@@ ')[:-1] + ']'
+        
+        with place1:
+            user_fmt = st.text_input(
+                'Link format',
+                placeholder=default_fmt,
+                help=dedent(
+                    '''
+                    Supported variants:
+        
+                    | Variant       | Example    |
+                    | ------------- | ---------- |
+                    | `<root_name>` | _assets    |
+                    | `<file_name>` | 110923.png |
+                    | `<bare_name>` | 110923     |
+                    | `<file_ext>`  | png        |
+                    '''
+                )
+            )
+        return user_fmt or default_fmt
 
 
 def _get_target_dir(img_root: str) -> str:
@@ -110,7 +123,5 @@ def _get_target_dir(img_root: str) -> str:
 
 
 if __name__ == '__main__':
-    # strun 2160 src/markdown_image_paste/md_img_paste/app_st.py
-    # pox -m pyapp_window --port 3001 --size 840x820 --title
-    #   "Markdown Image Paste"
+    # strun 2164 src/markdown_image_paste/md_img_paste/app_st.py
     main()
