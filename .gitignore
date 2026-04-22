@@ -3,5 +3,7 @@
 /src/markdown_image_cleaner/deleted/*
 /src/markdown_image_lofter/data/*
 /src/markdown_image_lofter/config_*.yaml
+/src/misc/_tree_in.txt
+/src/misc/_tree_out.txt
 __pycache__/
 !**/.gitkeep

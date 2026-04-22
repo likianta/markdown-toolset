@@ -5,24 +5,21 @@ description = ""
 # readme = "README.md"
 authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 packages = [{ include = "src" }]
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dynamic = ["dependencies"]
 # license = "MIT"
 
-# [project.urls]
-# homepage = ""
-
 [tool.poetry.dependencies]
-python = "^3.13"
-argsense = { version = "^1.1.1a0", source = "likianta" }
-lk-utils = { version = "^3.5.0a11", source = "likianta" }
-markdown2 = "^2.5.2"
-pillow = "^12.1.0"
-pyapp-window = { version = ">=2.1.5a5,<2.2.0", source = "likianta" }
+python = "^3.14"
+argsense = { version = "^1.1.1", source = "likianta" }
+lk-utils = { version = "^3.6.0a13", source = "likianta" }
+markdown2 = "^2.5.5"
+pillow = "^12.2.0"
+pyapp-window = { version = "^2.2.1", source = "likianta" }
 pyperclip = "^1.9.0"
-qmlease = { version = "^3.1.0a44", source = "likianta", extras = ["ui"] }
-streamlit = "^1.53.0"
-streamlit-canary = { version = "^0.1.1a13", source = "likianta" }
+qmlease = { version = "^4.0.0a5", source = "likianta", extras = ["ui"] }
+streamlit = "^1.56.0"
+streamlit-canary = { version = "^0.2.2b1", source = "likianta" }
 
 [[tool.poetry.source]]
 name = "tsinghua"
@@ -33,6 +30,16 @@ priority = "primary"
 name = "likianta"
 url = "http://localhost:2191/"
 priority = "supplemental"
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ty.rules]
+invalid-type-form = "ignore"
+unresolved-attribute = "ignore"
 
 [build-system]
 requires = ["poetry-core"]
