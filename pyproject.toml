@@ -7,10 +7,11 @@ authors = [{ name = "Likianta", email = "likianta@foxmail.com" }]
 requires-python = ">=3.14"
 dependencies = [
     "argsense>=1.1.2",
-    "lk-utils>=3.7.0b2",
+    "lk-utils>=3.7.0b4",
     "markdown2>=2.5.5",
     "pillow>=12.2.0",
     "pyapp-window>=2.2.3",
+    "pyfiglet>=1.0.4",
     "pyperclip>=1.9.0",
     # "qmlease[ui]>=4.0.0a6",
     "streamlit-canary>=0.3.0",
