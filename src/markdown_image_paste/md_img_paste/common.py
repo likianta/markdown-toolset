@@ -48,18 +48,22 @@ def grab_image() -> bytes:
         return fs.load(img[0], 'binary')
 
 
-def format_link(file: str, fmt: str, img_root: str = None) -> str:
+def format_link(md_file: str, img_root: str, img_link_fmt: str) -> str:
     def _substitute(m):
         match m.group(1):
             case 'bare_name':
-                return fs.barename(file)
-            case 'file_ext':
+                return fs.barename(md_file)
+            case 'extension':
                 return 'png'
             case 'file_name':
-                return fs.basename(file)
-            case 'root_name':
-                return fs.dirname(img_root or file)
+                return fs.basename(md_file)
+            case 'hns':
+                return timestamp('hns')
+            case 'img_dirname':
+                return fs.dirname(img_root or md_file)
+            case 'ymdhns':
+                return timestamp('ymdhns')[2:]
             case _:
                 raise NotImplementedError(m)
     
-    return re.sub(r'<(\w+)>', _substitute, fmt)
+    return re.sub(r'<(\w+)>', _substitute, img_link_fmt)

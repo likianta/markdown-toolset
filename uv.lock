@@ -322,7 +322,7 @@ wheels = [
 
 [[package]]
 name = "lk-utils"
-version = "3.7.0b4"
+version = "3.7.3"
 source = { registry = "http://localhost:2191/" }
 dependencies = [
     { name = "argsense" },
@@ -332,7 +332,7 @@ dependencies = [
     { name = "rich" },
 ]
 wheels = [
-    { url = "http://localhost:2191/lk-utils/lk_utils-3.7.0b4-py3-none-any.whl" },
+    { url = "http://localhost:2191/lk-utils/lk_utils-3.7.3-py3-none-any.whl" },
 ]
 
 [[package]]
@@ -355,6 +355,7 @@ dependencies = [
     { name = "argsense" },
     { name = "lk-utils" },
     { name = "markdown2" },
+    { name = "neoprint" },
     { name = "pillow" },
     { name = "pyapp-window" },
     { name = "pyfiglet" },
@@ -366,14 +367,15 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "argsense", specifier = ">=1.1.2", index = "http://localhost:2191/" },
-    { name = "lk-utils", specifier = ">=3.7.0b4", index = "http://localhost:2191/" },
+    { name = "lk-utils", specifier = ">=3.7.3", index = "http://localhost:2191/" },
     { name = "markdown2", specifier = ">=2.5.5" },
+    { name = "neoprint", specifier = ">=0.1.9b0", index = "http://localhost:2191/" },
     { name = "pillow", specifier = ">=12.2.0" },
     { name = "pyapp-window", specifier = ">=2.2.3", index = "http://localhost:2191/" },
     { name = "pyfiglet", specifier = ">=1.0.4" },
     { name = "pyperclip", specifier = ">=1.9.0" },
-    { name = "streamlit", specifier = ">=1.56.0" },
-    { name = "streamlit-canary", specifier = ">=0.3.0", index = "http://localhost:2191/" },
+    { name = "streamlit", specifier = ">=1.59.0" },
+    { name = "streamlit-canary", specifier = ">=0.4.0a1", index = "http://localhost:2191/" },
 ]
 
 [[package]]
@@ -435,13 +437,13 @@ wheels = [
 
 [[package]]
 name = "neoprint"
-version = "0.1.7a0"
+version = "0.1.9b0"
 source = { registry = "http://localhost:2191/" }
 dependencies = [
     { name = "rich" },
 ]
 wheels = [
-    { url = "http://localhost:2191/neoprint/neoprint-0.1.7a0-py3-none-any.whl" },
+    { url = "http://localhost:2191/neoprint/neoprint-0.1.9b0-py3-none-any.whl" },
 ]
 
 [[package]]
@@ -970,7 +972,7 @@ wheels = [
 
 [[package]]
 name = "streamlit-canary"
-version = "0.3.0"
+version = "0.4.0a1"
 source = { registry = "http://localhost:2191/" }
 dependencies = [
     { name = "argsense" },
@@ -981,7 +983,7 @@ dependencies = [
     { name = "streamlit", marker = "python_full_version >= '3.14'" },
 ]
 wheels = [
-    { url = "http://localhost:2191/streamlit-canary/streamlit_canary-0.3.0-py3-none-any.whl" },
+    { url = "http://localhost:2191/streamlit-canary/streamlit_canary-0.4.0a1-py3-none-any.whl" },
 ]
 
 [[package]]
