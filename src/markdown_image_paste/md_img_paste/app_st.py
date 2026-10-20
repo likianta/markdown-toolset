@@ -1,9 +1,12 @@
 if __name__ == '__main__':
     __package__ = 'src.markdown_image_paste.md_img_paste'
 
+import typing as tp
+
 import streamlit as st
 import streamlit_canary as sc
 from lk_utils import fs
+from neoprint import print
 
 from .common import add_content_to_clipboard
 from .common import format_link
@@ -21,19 +24,15 @@ def main() -> None:
     st.set_page_config('Markdown Image Paste')
 
     with sc.void_container():
-        img_root = sc.path_input('Image root')
+        img_root = _image_root()
         if not img_root:
-            st.markdown(':gray[Input root path to continue.]')
-            return
-        elif not fs.isdir(img_root):
-            st.error('Invalid directory path.')
             return
 
-        with sc.columns((3, 7)) as cols:
-            with cols[0]:
-                target_dirpath = _get_target_dir(img_root)
-            with cols[1]:
-                link_fmt = _get_link_format(img_root, target_dirpath)
+        doc_dir = _document_dirpath(img_root)
+        if not doc_dir:
+            return
+
+        link_fmt = _link_format(img_root, doc_dir)
 
         with sc.columns(2) as cols:
             with cols[0]:
@@ -58,27 +57,46 @@ def main() -> None:
                 st.error('No image found in the clipboard.')
             return
     if do_dump:
-        file = grab_and_save_image(img_root)
-        link = format_link(file, img_root, link_fmt)
+        img_file, link = format_link(doc_dir, link_fmt)
+        print(':vn', img_file, link)
+        grab_and_save_image(img_file)
         print(':iv2', link)
         add_content_to_clipboard(link)
         with info_area:
             st.success('Saved link: `{}`'.format(link))
 
 
-def _get_image_root() -> str | None:
-    x = st.text_input('Image root')
-    if x and fs.isdir(x):
-        return fs.abspath(x)
+def _document_dirpath(image_root: str) -> tp.Optional[str]:
+    path = st.text_input('Document path', '$image_parent')
+    if path:
+        if path == '$image_parent':
+            return fs.parent(image_root)
+        elif fs.isdir(path):
+            return fs.abspath(path)
+        elif fs.isfile(path):
+            return fs.parent(path)
+    st.error('Invalid file path.')
     return None
 
 
-def _get_link_format(img_root: str, target_dirpath: str) -> str:
-    relpath = fs.relpath(img_root, target_dirpath)
+def _image_root() -> tp.Optional[str]:
+    root = st.text_input('Image root')
+    if root:
+        if fs.isdir(root):
+            return fs.abspath(root)
+        else:
+            st.error('Invalid directory path.')
+    else:
+        st.markdown(':gray[Input root path to continue.]')
+    return None
+
+
+def _link_format(image_root: str, document_dir: str) -> str:
+    relpath = fs.relpath(image_root, document_dir)
     options = (
-        '![]({}/<ymd_hns>.<extension>)'.format(relpath),
+        '![]({}/<ymd-hns>.<extension>)'.format(relpath),
         '![]({}/<hns>.<extension>)'.format(relpath),
-        '![]({}/<source_name_hash>/<ymd_hns>.<extension>)'.format(relpath),
+        '![]({}/<source_name_hash>/<ymd-hns>.<extension>)'.format(relpath),
         '![]({}/<source_name_hash>/<hns>.<extension>)'.format(relpath),
     )
     if not relpath.startswith('..'):
@@ -101,15 +119,6 @@ def _get_link_format(img_root: str, target_dirpath: str) -> str:
             """
         ),
     )
-
-
-def _get_target_dir(img_root: str) -> str:
-    usable_dirs = ['..']
-    for d in fs.findall_dirs(fs.parent(img_root)):
-        if not d.name.startswith(('.', '_')):
-            usable_dirs.append('../{}'.format(d.relpath))
-    x = st.selectbox('Select target directory (optional)', usable_dirs)
-    return x.replace('..', fs.parent(img_root), 1)
 
 
 if __name__ == '__main__':
