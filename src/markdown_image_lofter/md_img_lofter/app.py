@@ -2,6 +2,7 @@ import re
 import streamlit_canary as sc
 import typing as tp
 from argsense import cli
+from functools import partial
 from lk_utils import fs, run_cmd_args, uuid
 
 
@@ -39,10 +40,10 @@ def run(enable_file_server: bool = True, bore_secret: str = '') -> None:
                 verbose=True,
                 blocking=False,
             )
-    sc.run(main_ui, port=2166)
+    sc.run(partial(main_ui, not bool(bore_secret)), port=2166)
 
 
-def main_ui():
+def main_ui(is_local_host: bool = True) -> None:
     sc.PageTitle('Markdown Image Lofter')
 
     # print(fs.abspath('.'))
@@ -63,7 +64,14 @@ def main_ui():
                 temp_dir = fs.there('../data/{}'.format(_file_to_id(doc_file)))
                 fs.make_dir(temp_dir)
                 doc_out.set(
-                    _translate_image_links(doc, fs.parent(doc_file), temp_dir)
+                    _translate_image_links(
+                        doc,
+                        fs.parent(doc_file),
+                        temp_dir,
+                        domain='http://localhost:2167'
+                        if is_local_host
+                        else 'http://47.102.108.149:2167',
+                    )
                 )
             else:
                 sc.toast('No image link found in this document.')
@@ -85,7 +93,9 @@ def _parse_document(): ...
 def _get_image_links(doc: str): ...
 
 
-def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
+def _translate_image_links(
+    doc: str, doc_dir_i, img_dir_o, domain: str = 'http://localhost:2167'
+) -> str:
 
     def _abspath(relpath):
         out = fs.normpath('{}/{}'.format(doc_dir_i, relpath))
@@ -97,8 +107,8 @@ def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
             img_dir_o, _file_to_id(file_i), fs.split(file_i, 3)[-1]
         )
         fs.make_link(file_i, file_o)
-        return 'http://47.102.108.149:2167/{}/{}'.format(
-            fs.dirname(img_dir_o), fs.filename(file_o)
+        return '{}/{}/{}'.format(
+            domain, fs.dirname(img_dir_o), fs.filename(file_o)
         )
 
     def _format_link(path):
