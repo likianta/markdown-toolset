@@ -1,20 +1,43 @@
 import re
-import typing as tp
 import streamlit_canary as sc
-from lk_utils import fs, uuid
+import typing as tp
+from argsense import cli
+from lk_utils import fs, run_cmd_args, uuid
 
 
-def run_ui():
+def run(bore_secret: str = ''):
+    if bore_secret:
+        run_cmd_args(
+            (
+                'python',
+                '-m',
+                'http.server',
+                '-d',
+                'src/markdown_image_lofter/data',
+                '2167',
+            ),
+            verbose=True,
+        )
+        run_cmd_args(
+            (
+                'bore',
+                'local',
+                '-s',
+                bore_secret,
+                '-t',
+                '47.102.108.149',
+                '-p',
+                '2167',
+                '2167',
+            ),
+            verbose=True,
+        )
     sc.run(main_ui, port=2166)
-
-
-def run_file_server():
-    ...
 
 
 def main_ui():
     sc.PageTitle('Markdown Image Lofter')
-    
+
     # print(fs.abspath('.'))
     inp = sc.PathInputBrowse(
         'Choose a ".md" file', fs.parent('.'), filter='.md'
@@ -38,10 +61,7 @@ def main_ui():
             else:
                 sc.toast('No image link found in this document.')
 
-    with sc.Container(
-        border=True, visible=sc.bind(doc_out, bool, default=False), height=800
-    ):
-        sc.Text(sc.bind(doc_out))
+    sc.TextArea(value=sc.bind(doc_out), height=800)
 
 
 def _detect_image_links(doc):
@@ -91,7 +111,6 @@ def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
 
 
 if __name__ == '__main__':
-    # python -m http.server -d src/markdown_image_lofter/data 2167
-    # <bore> 2167 2167
-    # python -m src.markdown_image_lofter.md_img_lofter.app
-    sc.run(main_ui, port=2166)
+    # python -m src.markdown_image_lofter.md_img_lofter.app -h
+    # python -m src.markdown_image_lofter.md_img_lofter.app <bore_secret>
+    cli.run(run)
