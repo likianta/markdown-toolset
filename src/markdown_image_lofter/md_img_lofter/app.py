@@ -1,10 +1,21 @@
 import re
+import typing as tp
 import streamlit_canary as sc
 from lk_utils import fs, uuid
 
 
+def run_ui():
+    sc.run(main_ui, port=2166)
+
+
+def run_file_server():
+    ...
+
+
 def main_ui():
     sc.PageTitle('Markdown Image Lofter')
+    
+    # print(fs.abspath('.'))
     inp = sc.PathInputBrowse(
         'Choose a ".md" file', fs.parent('.'), filter='.md'
     )
@@ -12,18 +23,17 @@ def main_ui():
     doc_out = sc.Property('')
 
     with sc.Button('Parse', width='stretch', type='primary') as btn:
+
         @btn.on_click
         def _():
-            file = inp.value.get()
+            file = tp.cast(str, inp.value.get())
             assert file and file.endswith('.md') and fs.exist(file)
             doc = fs.load(file, 'plain')
             if _detect_image_links(doc):
                 temp_dir = fs.there('../data/{}'.format(uuid()[::4]))
                 fs.make_dir(temp_dir)
                 doc_out.set(
-                    _translate_image_links(
-                        doc, fs.parent(file), temp_dir
-                    )
+                    _translate_image_links(doc, fs.parent(file), temp_dir)
                 )
             else:
                 sc.toast('No image link found in this document.')
@@ -37,24 +47,25 @@ def main_ui():
 def _detect_image_links(doc):
     return bool(re.search(r'!\[.*?]\((.+)\)', doc))
 
-def _parse_document():
-    ...
 
-def _get_image_links(doc: str):
-    ...
+def _parse_document(): ...
+
+
+def _get_image_links(doc: str): ...
+
 
 def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
-    
+
     def _abspath(relpath):
         out = fs.normpath('{}/{}'.format(doc_dir_i, relpath))
         assert fs.exist(out), (doc_dir_i, relpath)
         return out
-    
+
     def _copy_file(file_i):
         file_o = '{}/{}.{}'.format(
-            img_dir_o, 
+            img_dir_o,
             uuid('{}:{}'.format(file_i, fs.filetime(file_i)))[::4],
-            fs.split(file_i, 3)[-1]
+            fs.split(file_i, 3)[-1],
         )
         fs.make_link(file_i, file_o)
         return 'http://47.102.108.149:2167/{}/{}'.format(
@@ -70,14 +81,17 @@ def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
     doc_out = re.sub(
         r'!\[.*?]\((.+)\)',
         lambda m: (
-            _format_link(_copy_file(_abspath(m.group(1)))) 
-            if _is_local_file(m.group(1)) 
+            _format_link(_copy_file(_abspath(m.group(1))))
+            if _is_local_file(m.group(1))
             else m.group(0)
         ),
-        doc
+        doc,
     )
     return doc_out
 
 
 if __name__ == '__main__':
+    # python -m http.server -d src/markdown_image_lofter/data 2167
+    # <bore> 2167 2167
+    # python -m src.markdown_image_lofter.md_img_lofter.app
     sc.run(main_ui, port=2166)

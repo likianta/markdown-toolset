@@ -280,7 +280,7 @@ wheels = [
 
 [[package]]
 name = "lk-utils"
-version = "3.8.2"
+version = "3.8.3a0"
 source = { registry = "http://localhost:2131/" }
 dependencies = [
     { name = "argsense" },
@@ -290,7 +290,7 @@ dependencies = [
     { name = "rich" },
 ]
 wheels = [
-    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.2-py3-none-any.whl" },
+    { url = "http://localhost:2131/lk-utils/lk_utils-3.8.3a0-py3-none-any.whl" },
 ]
 
 [[package]]
@@ -325,7 +325,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "argsense", specifier = ">=3.0.1a0", index = "http://localhost:2131/" },
-    { name = "lk-utils", specifier = ">=3.8.2", index = "http://localhost:2131/" },
+    { name = "lk-utils", specifier = ">=3.8.3a0", index = "http://localhost:2131/" },
     { name = "markdown2", specifier = ">=2.5.5" },
     { name = "neoprint", specifier = ">=1.0.0b0", index = "http://localhost:2131/" },
     { name = "pillow", specifier = ">=12.2.0" },
