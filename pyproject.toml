@@ -9,13 +9,13 @@ dependencies = [
     "argsense>=3.0.1a0",
     "lk-utils>=3.8.3a0",
     "markdown2>=2.5.5",
-    "neoprint>=1.0.0b0",
+    "neoprint>=1.0.0",
     "pillow>=12.2.0",
     "pyapp-window>=2.3.0",
     "pyfiglet>=1.0.4",
     "pyperclip>=1.9.0",
     "streamlit>=1.65.0",
-    "streamlit-canary>=0.5.1b0",
+    "streamlit-canary>=0.5.1",
 ]
 
 [tool.uv.sources]

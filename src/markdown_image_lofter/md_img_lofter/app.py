@@ -5,8 +5,12 @@ from argsense import cli
 from lk_utils import fs, run_cmd_args, uuid
 
 
-def run(bore_secret: str = ''):
-    if bore_secret:
+def run(enable_file_server: bool = True, bore_secret: str = '') -> None:
+    """
+    Args:
+        bore_secret (-s):
+    """
+    if enable_file_server:
         run_cmd_args(
             (
                 'python',
@@ -17,21 +21,24 @@ def run(bore_secret: str = ''):
                 '2167',
             ),
             verbose=True,
+            blocking=False,
         )
-        run_cmd_args(
-            (
-                'bore',
-                'local',
-                '-s',
-                bore_secret,
-                '-t',
-                '47.102.108.149',
-                '-p',
-                '2167',
-                '2167',
-            ),
-            verbose=True,
-        )
+        if bore_secret:
+            run_cmd_args(
+                (
+                    'bore',
+                    'local',
+                    '-s',
+                    bore_secret,
+                    '-t',
+                    '47.102.108.149',
+                    '-p',
+                    '2167',
+                    '2167',
+                ),
+                verbose=True,
+                blocking=False,
+            )
     sc.run(main_ui, port=2166)
 
 
@@ -49,14 +56,14 @@ def main_ui():
 
         @btn.on_click
         def _():
-            file = tp.cast(str, inp.value.get())
-            assert file and file.endswith('.md') and fs.exist(file)
-            doc = fs.load(file, 'plain')
+            doc_file = tp.cast(str, inp.value.get())
+            assert doc_file and doc_file.endswith('.md') and fs.exist(doc_file)
+            doc = fs.load(doc_file, 'plain')
             if _detect_image_links(doc):
-                temp_dir = fs.there('../data/{}'.format(uuid()[::4]))
+                temp_dir = fs.there('../data/{}'.format(_file_to_id(doc_file)))
                 fs.make_dir(temp_dir)
                 doc_out.set(
-                    _translate_image_links(doc, fs.parent(file), temp_dir)
+                    _translate_image_links(doc, fs.parent(doc_file), temp_dir)
                 )
             else:
                 sc.toast('No image link found in this document.')
@@ -66,6 +73,10 @@ def main_ui():
 
 def _detect_image_links(doc):
     return bool(re.search(r'!\[.*?]\((.+)\)', doc))
+
+
+def _file_to_id(file: str) -> str:
+    return uuid('{}:{}'.format(file, fs.filetime(file)))[::4]
 
 
 def _parse_document(): ...
@@ -83,9 +94,7 @@ def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
 
     def _copy_file(file_i):
         file_o = '{}/{}.{}'.format(
-            img_dir_o,
-            uuid('{}:{}'.format(file_i, fs.filetime(file_i)))[::4],
-            fs.split(file_i, 3)[-1],
+            img_dir_o, _file_to_id(file_i), fs.split(file_i, 3)[-1]
         )
         fs.make_link(file_i, file_o)
         return 'http://47.102.108.149:2167/{}/{}'.format(
@@ -112,5 +121,5 @@ def _translate_image_links(doc: str, doc_dir_i, img_dir_o):
 
 if __name__ == '__main__':
     # python -m src.markdown_image_lofter.md_img_lofter.app -h
-    # python -m src.markdown_image_lofter.md_img_lofter.app <bore_secret>
+    # python -m src.markdown_image_lofter.md_img_lofter.app -s <bore_secret>
     cli.run(run)
