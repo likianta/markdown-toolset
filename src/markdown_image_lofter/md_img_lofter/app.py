@@ -6,11 +6,29 @@ from functools import partial
 from lk_utils import fs, run_cmd_args, uuid
 
 
-def run(enable_file_server: bool = True, bore_secret: str = '') -> None:
+def run(
+    enable_file_server: bool = True,
+    bore_secret: str = '',
+    domain: str = '',
+    port: int = 2167,
+) -> None:
     """
     Args:
+        enable_file_server (-f):
         bore_secret (-s):
+        domain (-d): Starting from 'http://' or 'https://'.
+            Note: CSDN image hosting requires https links. You can use -
+            NAT-DDNS tools (e.g. AweShell, Cpolar) to get a https domain.
+        port (-p):
     """
+    if not domain:
+        domain = (
+            f'http://47.102.108.149:{port}'
+            if bore_secret
+            else f'http://localhost:{port}'
+        )
+    print(domain, ':n')
+
     if enable_file_server:
         run_cmd_args(
             (
@@ -19,7 +37,7 @@ def run(enable_file_server: bool = True, bore_secret: str = '') -> None:
                 'http.server',
                 '-d',
                 'src/markdown_image_lofter/data',
-                '2167',
+                str(port),
             ),
             verbose=True,
             blocking=False,
@@ -34,16 +52,16 @@ def run(enable_file_server: bool = True, bore_secret: str = '') -> None:
                     '-t',
                     '47.102.108.149',
                     '-p',
-                    '2167',
-                    '2167',
+                    str(port),
+                    str(port),
                 ),
                 verbose=True,
                 blocking=False,
             )
-    sc.run(partial(main_ui, not bool(bore_secret)), port=2166)
+    sc.run(partial(main_ui, domain), port=2166)
 
 
-def main_ui(is_local_host: bool = True) -> None:
+def main_ui(domain: str = 'http://localhost:2167') -> None:
     sc.PageTitle('Markdown Image Lofter')
 
     # print(fs.abspath('.'))
@@ -65,12 +83,7 @@ def main_ui(is_local_host: bool = True) -> None:
                 fs.make_dir(temp_dir)
                 doc_out.set(
                     _translate_image_links(
-                        doc,
-                        fs.parent(doc_file),
-                        temp_dir,
-                        domain='http://localhost:2167'
-                        if is_local_host
-                        else 'http://47.102.108.149:2167',
+                        doc, fs.parent(doc_file), temp_dir, domain
                     )
                 )
             else:
@@ -132,4 +145,6 @@ def _translate_image_links(
 if __name__ == '__main__':
     # python -m src.markdown_image_lofter.md_img_lofter.app -h
     # python -m src.markdown_image_lofter.md_img_lofter.app -s <bore_secret>
+    # python -m src.markdown_image_lofter.md_img_lofter.app \
+    #   -d https://ys75786om272.vicp.fun -p 2031
     cli.run(run)
