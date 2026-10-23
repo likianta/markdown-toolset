@@ -3,10 +3,9 @@ import typing as tp
 import streamlit_canary as sc
 from lk_utils import fs
 from neoprint import print
-from streamlit_canary import components_v3 as v3
 
 
-class _State(sc.StateV2):
+class _State(sc.State):
     doc_root: sc.Property[str]
     img_root: sc.Property[str]
     link_fmt: sc.Property[str]
